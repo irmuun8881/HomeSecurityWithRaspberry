@@ -1,0 +1,4 @@
+opencv-python
+imghdr
+secure-smtplib
+face_recognition
