@@ -37,4 +37,5 @@
 Firstly, we need to update all the preexisting packages.
 
 ```
-sudo apt
+`rgb(9, 105, 218)` sudo apt
+```
