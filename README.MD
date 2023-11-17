@@ -23,7 +23,16 @@ This project is built using Raspberry Pi model 3b+ object detection such as Open
 **Pre-trained data:** _Haar Cascade_ classifiers are used as pre-trained data.    
 
   
-**Notification Service:** A service to send notifications. Python library like **_smtplib_** for email notifications or dedicative services like **_Pushbullet_** or **_Twilio_** for push notifications.  
+**Notification Service:** A service to send notifications. Python library like **_smtplib_** for email notifications or dedicative services like **_Pushbullet_** or **_Twilio_** for push notifications.    
   
+> [!TIP]
+> Operating systems and software libraries need to be updated regularly for security and functionality improvements.  
 
-  #### Operating system and software libraries need to be updated regularly for security and functionality improvements.
+ 
+
+## Installation process  
+
+Firstly, we need to update all the preexisting packages.
+
+```
+sudo apt
