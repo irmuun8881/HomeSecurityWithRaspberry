@@ -34,8 +34,9 @@
 
 ## Installation process  
 
-Firstly, we need to update all the preexisting packages.
+**1.**. Firstly, we need to update all the preexisting packages.
 
 ```
-`rgb(9, 105, 218)` sudo apt
+sudo apt update
+sudo apt upgrade
 ```
