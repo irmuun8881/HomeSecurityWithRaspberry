@@ -34,7 +34,7 @@
 
 ## Installation process  
 
-**1.**. Firstly, we need to update all the preexisting packages.
+**1.** Firstly, we need to update all the preexisting packages.
 
 ```
 sudo apt update
