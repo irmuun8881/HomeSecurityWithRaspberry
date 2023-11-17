@@ -4,9 +4,9 @@ This project is built using Raspberry Pi model 3b+ object detection such as Open
 ## Requirements
 
 ### Hardware
-** Raspberry Pi** or **small computer** alike
-**SD card** with memory at least **32GB** 
-**HDMI cable** and **monitor** for initial setup. Later on, Raspberry Pi device could be remotely controlled using **Real VNC Viewer**  
+**Raspberry Pi** or **small computer** alike.
+**SD card** with memory at least **32GB** .
+**HDMI cable** and **monitor** for initial setup. Later on, Raspberry Pi device could be remotely controlled using **Real VNC Viewer**.
 
 ## Installation
 
