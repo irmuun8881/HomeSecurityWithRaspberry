@@ -1,14 +1,11 @@
-# Raspberry Pi Door Monitoring System with Face Recognition
-
-This project utilizes a Raspberry Pi, a webcam, and OpenCV for monitoring activity at a door. It detects individuals approaching the door using a pre-trained Haar cascade for pedestrian detection and performs face recognition to determine if the detected person is a known family member.
+# Smart Home Security System using Raspberry Pi
+This project is built using Raspberry Pi model 3b+ object detection such as OpenCV. The frontal face and Full body haar cascade classifier are used as pre-trained data.
 
 ## Prerequisites
 
 - Python 3.x
 - OpenCV
-- imghdr
-- secure-smtplib
-- face_recognition
+
 
 ## Installation
 
