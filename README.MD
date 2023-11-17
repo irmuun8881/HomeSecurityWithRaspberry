@@ -14,9 +14,14 @@ This project is built using Raspberry Pi model 3b+ object detection such as Open
   
   
 ## Software
-**Raspberry Pi OS:** Install the latest version of the Raspberry PI operating system on the MicroSD card.    
+**Raspberry Pi OS:** Install the latest version of the Raspberry PI operating system on the MicroSD card. 
+  
 **Python:** Programming language that is used for writing scripts.    
-**OpenCV:** Open source computer vision library that is intended to perform face recognition, full body detection and image processing.    
+  
+**OpenCV:** Open source computer vision library that is intended to perform face recognition, full body detection and image processing.  
+  
 **Pre-trained data:** _Haar Cascade_ classifiers are used as pre-trained data.    
+
+  
 **Notification Service:** A service to send notifications. Python library like **_smtplib_** for email notifications or dedicative services like **_Pushbullet_** or **_Twilio_** for push notifications.  
   
