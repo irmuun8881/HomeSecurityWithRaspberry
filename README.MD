@@ -25,3 +25,5 @@ This project is built using Raspberry Pi model 3b+ object detection such as Open
   
 **Notification Service:** A service to send notifications. Python library like **_smtplib_** for email notifications or dedicative services like **_Pushbullet_** or **_Twilio_** for push notifications.  
   
+
+  #### Operating system and software libraries need to be updated regularly for security and functionality improvements.
