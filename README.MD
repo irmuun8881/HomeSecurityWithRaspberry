@@ -5,12 +5,13 @@ This project is built using Raspberry Pi model 3b+ object detection such as Open
 
 ### Hardware
 **Raspberry Pi** or **small computer** alike.  
-**SD card** with memory at least **32GB**  
-**HDMI cable** and **monitor** for initial setup. Later on, Raspberry Pi device could be remotely controlled using **Real VNC Viewer**.  
-
-## Installation
-
-1. Clone this repository.
-2. Install the required libraries using the provided requirements file:
-   ```bash
-   pip install -r requirements.txt
+**Camera Module**  
+**WIFI** or **Ethernet Cable**    
+**MicroSD Card** - for the Raspberry PI OS  
+**Power Supply**: Recommended to have a proper power supply for a decent performance.  
+**HDMI cable** and **monitor** for initial setup. Later on, the Raspberry Pi device could be remotely controlled using **Real VNC Viewer**.    
+**Case:**  An enclosure to protect Raspberry and its components  
+  
+  
+## Software
+**OpenCV**
