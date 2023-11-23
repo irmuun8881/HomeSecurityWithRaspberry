@@ -7,6 +7,7 @@ import datetime
 import os
 import face_recognition
 from dotenv import load_dotenv
+from time import time
 
 load_dotenv()
 
@@ -20,11 +21,9 @@ def get_face_encodings(image_folder):
             image_path = os.path.join(image_folder, image_name)
             face_image = face_recognition.load_image_file(image_path)
             face_encodings = face_recognition.face_encodings(face_image)
-
             if face_encodings:
                 known_face_encodings.append(face_encodings[0])
                 known_face_names.append(os.path.splitext(image_name)[0])
-
     return known_face_encodings, known_face_names
 
 # Initialize dlib's face detector and face recognition model using environment variables
@@ -46,6 +45,12 @@ receiver_email = os.getenv('RECEIVER_EMAIL')
 email_sent_time = None
 cooldown_seconds = 15  # 15 seconds
 
+# Initialize counters and timers
+face_detections_count = 0
+start_time = time()
+total_frames_processed = 0
+program_duration = 60  # Duration for which the program should run, in seconds
+
 def send_email_notification(image_path):
     try:
         msg = EmailMessage()
@@ -65,12 +70,23 @@ def send_email_notification(image_path):
     except Exception as e:
         print(f"Failed to send email: {e}")
 
-while True:
+# Calculate the end time based on the duration
+end_time = start_time + program_duration
+
+while time() < end_time:
     ret, frame = video_capture.read()
+    if not ret:
+        break  # If the frame wasn't captured correctly, stop the loop
+    
+    total_frames_processed += 1
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     faces = detector(rgb_frame)
-    face_encodings = []
+    
+    # Increment the face detection counter if any faces are detected
+    if faces:
+        face_detections_count += len(faces)
 
+    face_encodings = []
     for face in faces:
         shape = sp(rgb_frame, face)
         face_encoding = np.array(facerec.compute_face_descriptor(rgb_frame, shape))
@@ -81,18 +97,14 @@ while True:
 
     face_names = []
     for face_encoding in face_encodings:
-        if known_face_encodings:
-            distances = np.linalg.norm(known_face_encodings - face_encoding, axis=1)
-            match = np.any(distances <= 0.6)
-            name = "Unknown"
-            if match:
-                first_match_index = np.argmin(distances)
-                name = known_face_names[first_match_index]
-                print(f"Detected known person: {name}")
-            else:
-                print("Detected unknown person.")
+        distances = np.linalg.norm(known_face_encodings - face_encoding, axis=1)
+        match = np.any(distances <= 0.6)
+        name = "Unknown"
+        if match:
+            first_match_index = np.argmin(distances)
+            name = known_face_names[first_match_index]
+            print(f"Detected known person: {name}")
         else:
-            name = "Unknown"
             print("Detected unknown person.")
         face_names.append(name)
 
@@ -101,7 +113,7 @@ while True:
     if "Unknown" in face_names:
         current_time = datetime.datetime.now()
         if email_sent_time is None or (current_time - email_sent_time).total_seconds() > cooldown_seconds:
-            image_path = 'detected_stranger.jpg'
+            image_path = 'detected_person.jpg'
             cv2.imwrite(image_path, frame)
             send_email_notification(image_path)
             email_sent_time = current_time
@@ -111,3 +123,15 @@ while True:
 
 video_capture.release()
 cv2.destroyAllWindows()
+
+# Calculations for duration and speed
+total_duration = time() - start_time
+detection_speed = face_detections_count / total_duration if total_duration > 0 else 0
+faces_per_frame = face_detections_count / total_frames_processed if total_frames_processed > 0 else 0
+
+# Print the results
+print(f"Total face detections: {face_detections_count}")
+print(f"Total processing time: {total_duration:.2f} seconds")
+print(f"Detection speed: {detection_speed:.2f} faces per second")
+print(f"Average faces detected per frame: {faces_per_frame:.2f}")
+print(f"Total frames processed: {total_frames_processed}")
