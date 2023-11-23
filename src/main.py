@@ -21,9 +21,11 @@ def get_face_encodings(image_folder):
             image_path = os.path.join(image_folder, image_name)
             face_image = face_recognition.load_image_file(image_path)
             face_encodings = face_recognition.face_encodings(face_image)
+
             if face_encodings:
                 known_face_encodings.append(face_encodings[0])
                 known_face_names.append(os.path.splitext(image_name)[0])
+
     return known_face_encodings, known_face_names
 
 # Initialize dlib's face detector and face recognition model using environment variables
@@ -35,7 +37,7 @@ facerec = dlib.face_recognition_model_v1(os.getenv('FACE_RECOGNITION_MODEL_PATH'
 video_capture = cv2.VideoCapture(0)
 
 # Load known face encodings and names
-images_folder = os.getenv('KNOWN_FACES_FOLDER_PATH')
+images_folder = os.getenv('TRAINING_IMAGES_FOLDER')
 known_face_encodings, known_face_names = get_face_encodings(images_folder)
 
 # Email credentials and cooldown setup
@@ -50,6 +52,10 @@ face_detections_count = 0
 start_time = time()
 total_frames_processed = 0
 program_duration = 60  # Duration for which the program should run, in seconds
+
+# Path for saving unknown faces
+unknown_faces_dir = os.getenv('UNKNOWN_FACES_FOLDER_PATH')
+os.makedirs(unknown_faces_dir, exist_ok=True)  # Create the directory if it does not exist
 
 def send_email_notification(image_path):
     try:
@@ -106,6 +112,15 @@ while time() < end_time:
             print(f"Detected known person: {name}")
         else:
             print("Detected unknown person.")
+            # Save the image of the unknown face
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S%f")
+            filename = f"unknown_{timestamp}.jpg"
+            (top, right, bottom, left) = [max(0, coord) for coord in (top, right, bottom, left)]
+            face_image = frame[top:bottom, left:right]
+            if face_image.size != 0:
+                cv2.imwrite(os.path.join(unknown_faces_dir, filename), face_image)
+            else:
+                print("Error: Cropped face image is empty.")
         face_names.append(name)
 
     cv2.imshow('Video', frame)
