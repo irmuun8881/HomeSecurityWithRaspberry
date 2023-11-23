@@ -9,6 +9,7 @@ import face_recognition
 from dotenv import load_dotenv
 
 load_dotenv()
+
 # Function to get face encodings from known images
 def get_face_encodings(image_folder):
     known_face_encodings = []
@@ -35,41 +36,38 @@ facerec = dlib.face_recognition_model_v1(os.getenv('FACE_RECOGNITION_MODEL_PATH'
 video_capture = cv2.VideoCapture(0)
 
 # Load known face encodings and names
-images_folder = "/Users/JessFort/Documents/My_Coding_folder/IOT_project/image_folder"  # Update with the path to your images folder
+images_folder = os.getenv('IMAGE_FOLDER_PATH')
 known_face_encodings, known_face_names = get_face_encodings(images_folder)
 
-# Email sending cooldown setup
-email_sent_time = None
-cooldown_minutes = 5
-
-# Email credentials from environment variables
+# Email credentials and cooldown setup
 sender_email = os.getenv('SENDER_EMAIL')
 sender_password = os.getenv('SENDER_PASSWORD')
 receiver_email = os.getenv('RECEIVER_EMAIL')
+email_sent_time = None
+cooldown_seconds = 15  # 15 seconds
 
 def send_email_notification(image_path):
-    # Make sure the contents of this function are indented
-    msg = EmailMessage()
-    msg['Subject'] = 'Unrecognized Person Detected'
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
-    msg.set_content('An unrecognized person has been detected at the door.')
+    try:
+        msg = EmailMessage()
+        msg['Subject'] = 'Unrecognized Person Detected'
+        msg['From'] = sender_email
+        msg['To'] = receiver_email
+        msg.set_content('An unrecognized person has been detected at the door.')
 
-    with open(image_path, 'rb') as img:
-        file_data = img.read()
-        file_type = 'jpg'
-        file_name = image_path
+        with open(image_path, 'rb') as img:
+            img_data = img.read()
+            img_type = os.path.splitext(image_path)[1][1:]  # Extract file extension for subtype
+        msg.add_attachment(img_data, maintype='image', subtype=img_type, filename=os.path.basename(image_path))
 
-    msg.add_attachment(file_data, maintype='image', subtype=file_type, filename=file_name)
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(sender_email, sender_password)
+            smtp.send_message(msg)
+    except Exception as e:
+        print(f"Failed to send email: {e}")
 
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(sender_email, sender_password)
-        smtp.send_message(msg)
 while True:
     ret, frame = video_capture.read()
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-    # Detect faces
     faces = detector(rgb_frame)
     face_encodings = []
 
@@ -78,9 +76,11 @@ while True:
         face_encoding = np.array(facerec.compute_face_descriptor(rgb_frame, shape))
         face_encodings.append(face_encoding)
 
+        (top, right, bottom, left) = (face.top(), face.right(), face.bottom(), face.left())
+        cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+
     face_names = []
     for face_encoding in face_encodings:
-        # Compare face encodings with known faces
         if known_face_encodings:
             distances = np.linalg.norm(known_face_encodings - face_encoding, axis=1)
             match = np.any(distances <= 0.6)
@@ -92,11 +92,14 @@ while True:
             name = "Unknown"
         face_names.append(name)
 
+    cv2.imshow('Video', frame)
+
     if "Unknown" in face_names:
         current_time = datetime.datetime.now()
-        if email_sent_time is None or (current_time - email_sent_time).total_seconds() > cooldown_minutes * 60:
-            cv2.imwrite('unrecognized_person.jpg', frame)
-            send_email_notification('unrecognized_person.jpg')
+        if email_sent_time is None or (current_time - email_sent_time).total_seconds() > cooldown_seconds:
+            image_path = 'detected_person.jpg'
+            cv2.imwrite(image_path, frame)
+            send_email_notification(image_path)
             email_sent_time = current_time
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
