@@ -101,7 +101,7 @@ while True:
     if "Unknown" in face_names:
         current_time = datetime.datetime.now()
         if email_sent_time is None or (current_time - email_sent_time).total_seconds() > cooldown_seconds:
-            image_path = 'detected_person.jpg'
+            image_path = 'detected_stranger.jpg'
             cv2.imwrite(image_path, frame)
             send_email_notification(image_path)
             email_sent_time = current_time
