@@ -88,8 +88,12 @@ while True:
             if match:
                 first_match_index = np.argmin(distances)
                 name = known_face_names[first_match_index]
+                print(f"Detected known person: {name}")
+            else:
+                print("Detected unknown person.")
         else:
             name = "Unknown"
+            print("Detected unknown person.")
         face_names.append(name)
 
     cv2.imshow('Video', frame)
