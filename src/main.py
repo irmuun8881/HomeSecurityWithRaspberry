@@ -35,7 +35,7 @@ facerec = dlib.face_recognition_model_v1(os.getenv('FACE_RECOGNITION_MODEL_PATH'
 video_capture = cv2.VideoCapture(0)
 
 # Load known face encodings and names
-images_folder = os.getenv('IMAGE_FOLDER_PATH')
+images_folder = os.getenv('KNOWN_FACES_FOLDER_PATH')
 known_face_encodings, known_face_names = get_face_encodings(images_folder)
 
 # Email credentials and cooldown setup
