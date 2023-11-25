@@ -1,6 +1,4 @@
 import cv2
-import smtplib
-from email.message import EmailMessage
 import numpy as np
 import dlib
 import datetime
@@ -40,13 +38,6 @@ video_capture = cv2.VideoCapture(0)
 images_folder = os.getenv('TRAINING_IMAGES_FOLDER')
 known_face_encodings, known_face_names = get_face_encodings(images_folder)
 
-# Email credentials and cooldown setup
-sender_email = os.getenv('SENDER_EMAIL')
-sender_password = os.getenv('SENDER_PASSWORD')
-receiver_email = os.getenv('RECEIVER_EMAIL')
-email_sent_time = None
-cooldown_seconds = 15  # 15 seconds
-
 # Initialize counters and timers
 face_detections_count = 0
 start_time = time()
@@ -56,25 +47,6 @@ program_duration = 60  # Duration for which the program should run, in seconds
 # Path for saving unknown faces
 unknown_faces_dir = os.getenv('UNKNOWN_FACES_FOLDER_PATH')
 os.makedirs(unknown_faces_dir, exist_ok=True)  # Create the directory if it does not exist
-
-def send_email_notification(image_path):
-    try:
-        msg = EmailMessage()
-        msg['Subject'] = 'Unrecognized Person Detected'
-        msg['From'] = sender_email
-        msg['To'] = receiver_email
-        msg.set_content('An unrecognized person has been detected at the door.')
-
-        with open(image_path, 'rb') as img:
-            img_data = img.read()
-            img_type = os.path.splitext(image_path)[1][1:]  # Extract file extension for subtype
-        msg.add_attachment(img_data, maintype='image', subtype=img_type, filename=os.path.basename(image_path))
-
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login(sender_email, sender_password)
-            smtp.send_message(msg)
-    except Exception as e:
-        print(f"Failed to send email: {e}")
 
 # Calculate the end time based on the duration
 end_time = start_time + program_duration
@@ -124,14 +96,6 @@ while time() < end_time:
         face_names.append(name)
 
     cv2.imshow('Video', frame)
-
-    if "Unknown" in face_names:
-        current_time = datetime.datetime.now()
-        if email_sent_time is None or (current_time - email_sent_time).total_seconds() > cooldown_seconds:
-            image_path = 'detected_person.jpg'
-            cv2.imwrite(image_path, frame)
-            send_email_notification(image_path)
-            email_sent_time = current_time
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
