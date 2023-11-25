@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "My_Coding_folder",
+			"path": "../.."
+		},
+		{
+			"name": "Survey",
+			"path": "../../Survey"
+		}
+	],
+	"settings": {}
+}
