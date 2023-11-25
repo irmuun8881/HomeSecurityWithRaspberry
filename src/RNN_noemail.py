@@ -1,15 +1,22 @@
 import cv2
 import numpy as np
 import dlib
-import datetime
 import os
-import face_recognition
+import datetime
+from scipy.spatial import distance
 from dotenv import load_dotenv
 from time import time
 
+
+# Load environment variables
 load_dotenv()
 
-# Function to get face encodings from known images
+# Dlib's face detection and recognition models
+detector = dlib.get_frontal_face_detector()
+shape_predictor = dlib.shape_predictor(os.getenv('SHAPE_PREDICTOR_PATH'))
+facerec = dlib.face_recognition_model_v1(os.getenv('FACE_RECOGNITION_MODEL_PATH'))
+
+# Function to get face encodings from known images using dlib
 def get_face_encodings(image_folder):
     known_face_encodings = []
     known_face_names = []
@@ -17,19 +24,16 @@ def get_face_encodings(image_folder):
     for image_name in os.listdir(image_folder):
         if image_name.endswith('.jpg') or image_name.endswith('.png'):
             image_path = os.path.join(image_folder, image_name)
-            face_image = face_recognition.load_image_file(image_path)
-            face_encodings = face_recognition.face_encodings(face_image)
-
-            if face_encodings:
-                known_face_encodings.append(face_encodings[0])
+            face_image = dlib.load_rgb_image(image_path)  # Using dlib to load image
+            detected_faces = detector(face_image)
+            for face in detected_faces:
+                shape = shape_predictor(face_image, face)
+                face_encoding = np.array(facerec.compute_face_descriptor(face_image, shape))
+                known_face_encodings.append(face_encoding)
                 known_face_names.append(os.path.splitext(image_name)[0])
+                break  # Assuming only one face per image
 
     return known_face_encodings, known_face_names
-
-# Initialize dlib's face detector and face recognition model using environment variables
-detector = dlib.get_frontal_face_detector()
-sp = dlib.shape_predictor(os.getenv('SHAPE_PREDICTOR_PATH'))
-facerec = dlib.face_recognition_model_v1(os.getenv('FACE_RECOGNITION_MODEL_PATH'))
 
 # Initialize video capture
 video_capture = cv2.VideoCapture(0)
@@ -66,7 +70,7 @@ while time() < end_time:
 
     face_encodings = []
     for face in faces:
-        shape = sp(rgb_frame, face)
+        shape = shape_predictor(rgb_frame, face)
         face_encoding = np.array(facerec.compute_face_descriptor(rgb_frame, shape))
         face_encodings.append(face_encoding)
 
@@ -84,15 +88,6 @@ while time() < end_time:
             print(f"Detected known person: {name}")
         else:
             print("Detected unknown person.")
-            # Save the image of the unknown face
-            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S%f")
-            filename = f"unknown_{timestamp}.jpg"
-            (top, right, bottom, left) = [max(0, coord) for coord in (top, right, bottom, left)]
-            face_image = frame[top:bottom, left:right]
-            if face_image.size != 0:
-                cv2.imwrite(os.path.join(unknown_faces_dir, filename), face_image)
-            else:
-                print("Error: Cropped face image is empty.")
         face_names.append(name)
 
     cv2.imshow('Video', frame)
