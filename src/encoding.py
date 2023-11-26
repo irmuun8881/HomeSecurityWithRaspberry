@@ -32,15 +32,24 @@ for person_name in os.listdir(training_images_dir):
             
             # Detect faces in the image
             detected_faces = detector(img, 1)
-            if len(detected_faces) == 0:
+            
+            # If faces are detected or it's a negative sample, proceed
+            if len(detected_faces) > 0 or person_name.lower() == 'negatives':
+                if len(detected_faces) > 0:
+                    # Process the first face detected
+                    shape = sp(img, detected_faces[0])
+                    face_descriptor = facerec.compute_face_descriptor(img, shape)
+                    encodings.append(np.array(face_descriptor))
+                    labels.append(person_name)  # Use the folder name as the label
+                else:
+                    # For negative samples, you might want to add a descriptor
+                    # that represents "no face" or similar
+                    # This part needs to be handled according to your requirement
+                    # e.g., using a zero vector or a distinct negative descriptor
+                    encodings.append(np.zeros(128))  # Example placeholder for negative encoding
+                    labels.append('negative')  # Label for negative samples
+            else:
                 print(f"No faces found in {img_file} - Skipping.")
-                continue
-
-            # We assume that each image has one face only
-            shape = sp(img, detected_faces[0])
-            face_descriptor = facerec.compute_face_descriptor(img, shape)
-            encodings.append(np.array(face_descriptor))
-            labels.append(person_name)
 
 # Save encodings and labels to a file in the current directory
 with open('face_encodings.pickle', 'wb') as f:
