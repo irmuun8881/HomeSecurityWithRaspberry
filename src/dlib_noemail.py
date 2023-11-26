@@ -7,14 +7,16 @@ from scipy.spatial import distance
 from dotenv import load_dotenv
 from time import time
 
-
 # Load environment variables
 load_dotenv()
 
 # Dlib's face detection and recognition models
 detector = dlib.get_frontal_face_detector()
-shape_predictor = dlib.shape_predictor(os.getenv('SHAPE_PREDICTOR_PATH'))
-facerec = dlib.face_recognition_model_v1(os.getenv('FACE_RECOGNITION_MODEL_PATH'))
+
+# Change the paths
+shape_predictor = dlib.shape_predictor('/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/models/shape_predictor_68_face_landmarks.dat')
+facerec = dlib.face_recognition_model_v1('/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/models/dlib_face_recognition_resnet_model_v1.dat')
+images_folder = '/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/training_images_folder/irmuun' 
 
 # Function to get face encodings from known images using dlib
 def get_face_encodings(image_folder):
@@ -39,18 +41,13 @@ def get_face_encodings(image_folder):
 video_capture = cv2.VideoCapture(0)
 
 # Load known face encodings and names
-images_folder = os.getenv('TRAINING_IMAGES_FOLDER')
 known_face_encodings, known_face_names = get_face_encodings(images_folder)
 
 # Initialize counters and timers
 face_detections_count = 0
 start_time = time()
 total_frames_processed = 0
-program_duration = 60  # Duration for which the program should run, in seconds
-
-# Path for saving unknown faces
-unknown_faces_dir = os.getenv('UNKNOWN_FACES_FOLDER_PATH')
-os.makedirs(unknown_faces_dir, exist_ok=True)  # Create the directory if it does not exist
+program_duration = 20  # Duration for which the program should run, in seconds
 
 # Calculate the end time based on the duration
 end_time = start_time + program_duration

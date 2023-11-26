@@ -15,8 +15,12 @@ load_dotenv()
 
 # Dlib's face detection and recognition models
 detector = dlib.get_frontal_face_detector()
-shape_predictor = dlib.shape_predictor(os.getenv('SHAPE_PREDICTOR_PATH'))
-facerec = dlib.face_recognition_model_v1(os.getenv('FACE_RECOGNITION_MODEL_PATH'))
+
+# Change the paths
+shape_predictor = dlib.shape_predictor('/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/models/shape_predictor_68_face_landmarks.dat')
+facerec = dlib.face_recognition_model_v1('/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/models/dlib_face_recognition_resnet_model_v1.dat')
+images_folder = '/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/training_images_folder/irmuun' 
+
 
 # Function to get face encodings from known images using dlib
 def get_face_encodings(image_folder):
@@ -26,7 +30,7 @@ def get_face_encodings(image_folder):
     for image_name in os.listdir(image_folder):
         if image_name.endswith('.jpg') or image_name.endswith('.png'):
             image_path = os.path.join(image_folder, image_name)
-            face_image = dlib.load_rgb_image(image_path)  # Using dlib to load image
+            face_image = dlib.load_rgb_image(image_path)
             detected_faces = detector(face_image)
             for face in detected_faces:
                 shape = shape_predictor(face_image, face)
@@ -41,7 +45,6 @@ def get_face_encodings(image_folder):
 video_capture = cv2.VideoCapture(0)
 
 # Load known face encodings and names
-images_folder = os.getenv('TRAINING_IMAGES_FOLDER')
 known_face_encodings, known_face_names = get_face_encodings(images_folder)
 
 # Email credentials and cooldown setup
@@ -57,10 +60,6 @@ start_time = time()
 total_frames_processed = 0
 program_duration = 60  # Duration for which the program should run, in seconds
 
-# Path for saving unknown faces
-unknown_faces_dir = os.getenv('UNKNOWN_FACES_FOLDER_PATH')
-os.makedirs(unknown_faces_dir, exist_ok=True)  # Create the directory if it does not exist
-
 def send_email_notification(image_path):
     try:
         msg = EmailMessage()
@@ -71,7 +70,7 @@ def send_email_notification(image_path):
 
         with open(image_path, 'rb') as img:
             img_data = img.read()
-            img_type = os.path.splitext(image_path)[1][1:]  # Extract file extension for subtype
+            img_type = os.path.splitext(image_path)[1][1:]
         msg.add_attachment(img_data, maintype='image', subtype=img_type, filename=os.path.basename(image_path))
 
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
@@ -116,15 +115,6 @@ while time() < end_time:
             print(f"Detected known person: {name}")
         else:
             print("Detected unknown person.")
-            # Save the image of the unknown face
-            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S%f")
-            filename = f"unknown_{timestamp}.jpg"
-            (top, right, bottom, left) = [max(0, coord) for coord in (top, right, bottom, left)]
-            face_image = frame[top:bottom, left:right]
-            if face_image.size != 0:
-                cv2.imwrite(os.path.join(unknown_faces_dir, filename), face_image)
-            else:
-                print("Error: Cropped face image is empty.")
         face_names.append(name)
 
     cv2.imshow('Video', frame)
