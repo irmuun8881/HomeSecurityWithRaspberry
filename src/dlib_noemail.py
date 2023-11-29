@@ -6,44 +6,24 @@ import datetime
 from scipy.spatial import distance
 from dotenv import load_dotenv
 from time import time
+import pickle  # Import pickle for loading the pre-encoded data
 
 # Load environment variables
 load_dotenv()
 
 # Dlib's face detection and recognition models
 detector = dlib.get_frontal_face_detector()
-
-# Change the paths
 shape_predictor = dlib.shape_predictor('/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/models/shape_predictor_68_face_landmarks.dat')
 facerec = dlib.face_recognition_model_v1('/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/models/dlib_face_recognition_resnet_model_v1.dat')
-images_folder = '/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/training_images_folder' 
 
-# Function to get face encodings from known images using dlib
-def get_face_encodings(image_folder):
-    known_face_encodings = []
-    known_face_names = []
-
-    for image_name in os.listdir(image_folder):
-        if image_name.endswith('.jpg') or image_name.endswith('.png'):
-            image_path = os.path.join(image_folder, image_name)
-            face_image = dlib.load_rgb_image(image_path)  # Using dlib to load image
-            detected_faces = detector(face_image)
-            for face in detected_faces:
-                shape = shape_predictor(face_image, face)
-                face_encoding = np.array(facerec.compute_face_descriptor(face_image, shape))
-                known_face_encodings.append(face_encoding)
-                known_face_names.append(os.path.splitext(image_name)[0])
-                break  # Assuming only one face per image
-
-    return known_face_encodings, known_face_names
+# Load known face encodings and names from the pickle file
+with open('/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/known_faces.pkl', 'rb') as f:
+    known_face_encodings, known_face_names = pickle.load(f)
 
 # Initialize video capture
 video_capture = cv2.VideoCapture(0)
 video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, 320) 
 video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
-
-# Load known face encodings and names
-known_face_encodings, known_face_names = get_face_encodings(images_folder)
 
 # Initialize counters and timers
 face_detections_count = 0
@@ -57,13 +37,12 @@ end_time = start_time + program_duration
 while time() < end_time:
     ret, frame = video_capture.read()
     if not ret:
-        break  # If the frame wasn't captured correctly, stop the loop
+        break
     
     total_frames_processed += 1
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     faces = detector(rgb_frame)
     
-    # Increment the face detection counter if any faces are detected
     if faces:
         face_detections_count += len(faces)
 

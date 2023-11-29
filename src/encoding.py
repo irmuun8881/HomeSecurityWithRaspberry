@@ -28,7 +28,7 @@ def get_face_encodings(image_folder):
     return known_face_encodings, known_face_names
 
 # Change the path to your images folder
-images_folder = '/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/training_images_folder/irmuun'
+images_folder = '/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/training_images_folder'
 
 # Save face encodings and names
 known_face_encodings, known_face_names = get_face_encodings(images_folder)
