@@ -4,12 +4,9 @@ import dlib
 import os
 import datetime
 from scipy.spatial import distance
-from dotenv import load_dotenv
 from time import time
 import pickle  # Import pickle for loading the pre-encoded data
 
-# Load environment variables
-load_dotenv()
 
 # Dlib's face detection and recognition models
 detector = dlib.get_frontal_face_detector()
@@ -58,7 +55,7 @@ while time() < end_time:
     face_names = []
     for face_encoding in face_encodings:
         distances = np.linalg.norm(known_face_encodings - face_encoding, axis=1)
-        match = np.any(distances <= 0.45)
+        match = np.any(distances <= 0.4)
         name = "Unknown"
         if match:
             first_match_index = np.argmin(distances)

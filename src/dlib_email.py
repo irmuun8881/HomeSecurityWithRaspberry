@@ -46,13 +46,13 @@ def send_email(subject, body, receiver_email, sender_email, sender_password):
 # Initialize counters and timers
 face_detections_count = 0
 start_time = time()
+total_frames_processed=0
 program_duration = 20  # Duration for which the program should run, in seconds
 email_cooldown = 15  # Email cooldown in seconds
 last_email_time = 0
 
 # Calculate the end time based on the duration
 end_time = start_time + program_duration
-total_frames_processed=0
 
 while time() < end_time:
     ret, frame = video_capture.read()
@@ -78,7 +78,7 @@ while time() < end_time:
     face_names = []
     for face_encoding in face_encodings:
         distances = np.linalg.norm(known_face_encodings - face_encoding, axis=1)
-        match = np.any(distances <= 0.45)
+        match = np.any(distances <= 0.4)
         name = "Unknown"
         if match:
             first_match_index = np.argmin(distances)
