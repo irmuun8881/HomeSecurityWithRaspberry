@@ -78,12 +78,12 @@ cv2.destroyAllWindows()
 
 # Calculations for duration and speed
 total_duration = time() - start_time
-detection_speed = face_detections_count / total_duration if total_duration > 0 else 0
+detection_speed = total_frames_processed / total_duration if total_duration > 0 else 0
 faces_per_frame = face_detections_count / total_frames_processed if total_frames_processed > 0 else 0
 
 # Print the results
 print(f"Total face detections: {face_detections_count}")
 print(f"Total processing time: {total_duration:.2f} seconds")
-print(f"Detection speed: {detection_speed:.2f} faces per second")
+print(f"Detection speed: {detection_speed:.2f} frames per second")
 print(f"Average faces detected per frame: {faces_per_frame:.2f}")
 print(f"Total frames processed: {total_frames_processed}")
