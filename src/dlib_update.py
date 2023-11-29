@@ -39,8 +39,6 @@ def process_frame(frame, known_face_encodings, known_face_names):
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
         cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-        print(f"Detected: {name}")  # Continuously print detected faces
-
     return frame
 
 # Main
