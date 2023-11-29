@@ -16,7 +16,7 @@ detector = dlib.get_frontal_face_detector()
 # Change the paths
 shape_predictor = dlib.shape_predictor('/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/models/shape_predictor_68_face_landmarks.dat')
 facerec = dlib.face_recognition_model_v1('/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/models/dlib_face_recognition_resnet_model_v1.dat')
-images_folder = '/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/training_images_folder/irmuun' 
+images_folder = '/Users/JessFort/Documents/My_Coding_folder/IOT_Oke/training_images_folder' 
 
 # Function to get face encodings from known images using dlib
 def get_face_encodings(image_folder):
@@ -39,6 +39,8 @@ def get_face_encodings(image_folder):
 
 # Initialize video capture
 video_capture = cv2.VideoCapture(0)
+video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, 320) 
+video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
 # Load known face encodings and names
 known_face_encodings, known_face_names = get_face_encodings(images_folder)
