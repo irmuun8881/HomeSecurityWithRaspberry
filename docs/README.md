@@ -34,17 +34,20 @@ This project develops a Smart Home Security System using a Raspberry Pi 3b+ and 
    sudo apt upgrade
    pip install -r requirements.txt
 Configuration for Email Notifications:
+
 Set up an SMTP server or use services like Pushbullet/Twilio.
 Clone Repository and Modify Paths:
-```bash
-Copy code
-git clone https://github.com/irmuun8881/HomeSecurityWithRaspberry/.git
-cd [Repository Directory]
-Update file paths in the scripts to point to your local directories (e.g., for saved models, known faces data).
-Running the Application:
+
 bash
 Copy code
-python [Script Name]
+git clone https://github.com/irmuun8881/HomeSecurityWithRaspberry.git
+cd [Repository Directory]  # Replace with the actual directory name
+Update file paths in the scripts to point to your local directories (e.g., for saved models, known faces data).
+Running the Application:
+
+bash
+Copy code
+python [Script Name]  # Replace with the actual name of your main script
 Usage
 Position the device strategically (e.g., near the front door).
 The system processes the video feed, recognizes faces, and categorizes them as known or unknown.
@@ -54,7 +57,3 @@ Ensure your environment is correctly set up with all dependencies.
 Regularly update the system for security and functionality improvements.
 Project Results
 The system effectively recognizes faces, providing a secure environment. Detailed results and analytics can be found in the results folder.
-
-typescript
-Copy code
-
