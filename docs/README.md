@@ -25,35 +25,36 @@ This project develops a Smart Home Security System using a Raspberry Pi 3b+ and 
 - Email notification system (e.g., `smtplib`, `Pushbullet`, `Twilio`)
 
 ## Environment Setup and Installation
-1. **Raspberry Pi Setup**:
-   - Install Raspberry Pi OS on the MicroSD card.
-   - Attach the camera module and connect the Raspberry Pi to the internet.
-2. **Install Dependencies**:
-   ```bash
-   sudo apt update
-   sudo apt upgrade
-   pip install -r requirements.txt
-Configuration for Email Notifications:
 
-## Clone Repository and Setup
+### Raspberry Pi Setup:
+- Install Raspberry Pi OS on the MicroSD card.
+- Attach the camera module and connect the Raspberry Pi to the internet.
 
-Clone the project repository and navigate to the directory:
-
+### Install Dependencies:
 ```bash
-git clone https://github.com/irmuun8881/HomeSecurityWithRaspberry.git
-cd HomeSecurityWithRaspberry  # Replace 'HomeSecurityWithRaspberry' if your directory is named differently
-Update file paths in the scripts to point to your local directories (e.g., for saved models, known faces data).
-
-**Running the Application
-Run the main application script:
-
-bash
+sudo apt update
+sudo apt upgrade
+pip install -r requirements.txt
+```
+### Configuration for Email Notifications:
+Set up an SMTP server or use services like Pushbullet/Twilio.
+Clone Repository and Modify Paths:
+```bash
 Copy code
+git clone https://github.com/irmuun8881/HomeSecurityWithRaspberry.git
+cd HomeSecurityWithRaspberry
+```
+Update file paths in the scripts to point to your local directories (e.g., for saved models, known faces data).
+### Running the Application:
+```bash
 python script_name.py  # Replace 'script_name.py' with the actual name of your main script
-Usage
+```
+### Usage
 Position the device strategically (e.g., near the front door).
 The system processes the video feed, recognizes faces, and categorizes them as known or unknown.
 Unrecognized faces trigger an email notification.
-Additional Notes
+### Additional Notes
 Ensure your environment is correctly set up with all dependencies.
 Regularly update the system for security and functionality improvements.
+### Project Results
+The system effectively recognizes faces, providing a secure environment. Detailed results and analytics can be found in the results folder.
