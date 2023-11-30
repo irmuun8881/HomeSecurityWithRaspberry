@@ -36,7 +36,7 @@ This project develops a Smart Home Security System using a Raspberry Pi 3b+ and 
 Configuration for Email Notifications:
 Set up an SMTP server or use services like Pushbullet/Twilio.
 Clone Repository and Modify Paths:
-bash
+```bash
 Copy code
 git clone https://github.com/irmuun8881/HomeSecurityWithRaspberry/.git
 cd [Repository Directory]
@@ -58,6 +58,3 @@ The system effectively recognizes faces, providing a secure environment. Detaile
 typescript
 Copy code
 
-Make sure to replace `[Repository Directory]` and `[Script Name]` with the actual directory name and the script users should run. Additionally, you can add a `requirements.txt` section if needed, and include any other relevant sections such as `Contributing`, `License`, or `Contact`. 
-
-When this content is viewed on GitHub, the markdown formatting will create a styled document that is easy to navigate and read.
