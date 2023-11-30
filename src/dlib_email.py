@@ -4,10 +4,11 @@ import dlib
 import pickle
 import smtplib
 from email.message import EmailMessage
-from dotenv import load_dotenv
-from time import time
+import imghdr
 import os
+from dotenv import load_dotenv
 import datetime
+import time
 
 # Load environment variables
 load_dotenv()
@@ -31,13 +32,21 @@ sender_email = os.getenv('SENDER_EMAIL')
 sender_password = os.getenv('SENDER_PASSWORD')
 receiver_email = os.getenv('RECEIVER_EMAIL')
 
-# Function to send email
-def send_email(subject, body, receiver_email, sender_email, sender_password):
+# Function to send email with an attachment
+def send_email_with_attachment(subject, body, receiver_email, sender_email, sender_password, attachment):
     message = EmailMessage()
     message.set_content(body)
     message['Subject'] = subject
     message['From'] = sender_email
     message['To'] = receiver_email
+
+    # Add attachment
+    if attachment:
+        with open(attachment, 'rb') as f:
+            file_data = f.read()
+            file_type = imghdr.what(f.name)
+            file_name = f.name
+        message.add_attachment(file_data, maintype='image', subtype=file_type, filename=file_name)
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(sender_email, sender_password)
@@ -45,20 +54,24 @@ def send_email(subject, body, receiver_email, sender_email, sender_password):
 
 # Initialize counters and timers
 face_detections_count = 0
-start_time = time()
-total_frames_processed=0
+known_faces_count = 0
+unknown_faces_count = 0
+unknown_faces_temp_count = 0
+start_time = time.time()
+unknown_face_start_time = None
+total_frames_processed = 0
 program_duration = 20  # Duration for which the program should run, in seconds
-email_cooldown = 15  # Email cooldown in seconds
+email_cooldown = 60  # Email cooldown in seconds (set to 60 seconds)
 last_email_time = 0
 
 # Calculate the end time based on the duration
 end_time = start_time + program_duration
 
-while time() < end_time:
+while time.time() < end_time:
     ret, frame = video_capture.read()
     if not ret:
         break
-    
+
     total_frames_processed += 1
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     faces = detector(rgb_frame)
@@ -75,7 +88,6 @@ while time() < end_time:
         (top, right, bottom, left) = (face.top(), face.right(), face.bottom(), face.left())
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
 
-    face_names = []
     for face_encoding in face_encodings:
         distances = np.linalg.norm(known_face_encodings - face_encoding, axis=1)
         match = np.any(distances <= 0.4)
@@ -83,14 +95,26 @@ while time() < end_time:
         if match:
             first_match_index = np.argmin(distances)
             name = known_face_names[first_match_index]
+            known_faces_count += 1
             print(f"Detected known person: {name}")
         else:
-            current_time = time()
-            if current_time - last_email_time > email_cooldown:
-                send_email("Unrecognized Person Detected", "An unknown person was detected.", receiver_email, sender_email, sender_password)
-                last_email_time = current_time
+            if unknown_face_start_time is None:
+                unknown_face_start_time = time.time()
+            unknown_faces_temp_count += 1
+            
+            if time.time() - unknown_face_start_time > 5:
+                if unknown_faces_temp_count >= 4:
+                    img_name = f"unknown_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
+                    cv2.imwrite(img_name, frame)
+                    send_email_with_attachment("Unrecognized Person Detected",
+                                               "Several unknown people were detected.",
+                                               receiver_email, sender_email, sender_password,
+                                               img_name)
+                    last_email_time = time.time()
+                unknown_face_start_time = None
+                unknown_faces_temp_count = 0
+            unknown_faces_count += 1
             print("Detected unknown person.")
-        face_names.append(name)
 
     cv2.imshow('Video', frame)
 
@@ -101,11 +125,13 @@ video_capture.release()
 cv2.destroyAllWindows()
 
 # Calculations for duration and speed
-total_duration = time() - start_time
+total_duration = time.time() - start_time
 detection_speed = total_frames_processed / total_duration if total_duration > 0 else 0
 faces_per_frame = face_detections_count / total_frames_processed if total_frames_processed > 0 else 0
 
 # Print the results
+print(f"Total known face detections: {known_faces_count}")
+print(f"Total unknown face detections: {unknown_faces_count}")
 print(f"Total face detections: {face_detections_count}")
 print(f"Total processing time: {total_duration:.2f} seconds")
 print(f"Detection speed: {detection_speed:.2f} frames per second")
