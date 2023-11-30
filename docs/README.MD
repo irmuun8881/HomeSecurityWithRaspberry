@@ -1,42 +1,53 @@
-# Smart Home Security System using Raspberry Pi
-> [!NOTE]
-> This project is built using Raspberry Pi model 3b+ object detection such as OpenCV. The frontal face and Full body haar cascade classifier are used as pre-trained data.
+Smart Home Security System using Raspberry Pi
+Project Overview
+This project develops a Smart Home Security System using Raspberry Pi 3b+ and OpenCV. It focuses on real-time facial recognition to differentiate between known individuals and potential intruders, sending immediate email alerts upon detecting unknown faces.
 
-
-## Requirements
-
-### Hardware
-**Raspberry Pi** or **small computer** alike.  
-**Camera Module**  
-**WIFI** or **Ethernet Cable**    
-**MicroSD Card** - for the Raspberry PI OS  
-**Power Supply**: Recommended to have a proper power supply for a decent performance.  
-**HDMI cable** and **monitor** for initial setup. Later on, the Raspberry Pi device could be remotely controlled using **Real VNC Viewer**.    
-**Case:**  An enclosure to protect Raspberry and its components  
-  
-  
-## Software
-**Raspberry Pi OS:** Install the latest version of the Raspberry PI operating system on the MicroSD card. 
-  
-**Python:** Programming language that is used for writing scripts.    
-  
-**OpenCV:** Open source computer vision library that is intended to perform face recognition, full body detection and image processing.  
-  
-**Pre-trained data:** _Haar Cascade_ classifiers are used as pre-trained data.    
-
-  
-**Notification Service:** A service to send notifications. Python library like **_smtplib_** for email notifications or dedicative services like **_Pushbullet_** or **_Twilio_** for push notifications.    
-  
-> [!TIP]
-> Operating systems and software libraries need to be updated regularly for security and functionality improvements.  
-
- 
-
-## Installation process  
-
-**1.** Firstly, we need to update all the preexisting packages.
-
-```
+Features
+Facial Recognition: Leverages dlib's model for accurate identification.
+Real-Time Notifications: Sends email alerts for unrecognized faces.
+Optimized for Raspberry Pi: Efficient for Raspberry Pi's limited processing capacity.
+Hardware Requirements
+Raspberry Pi (3b+ recommended)
+Camera Module
+Internet Connection (WIFI/Ethernet)
+MicroSD Card with Raspberry Pi OS
+Power Supply
+HDMI Cable and Monitor (initial setup)
+Raspberry Pi Case
+Software Requirements
+Raspberry Pi OS
+Python 3.6+
+OpenCV
+dlib
+Email notification system (e.g., smtplib, Pushbullet, Twilio)
+Environment Setup and Installation
+1. Raspberry Pi Setup:
+Install Raspberry Pi OS on the MicroSD card.
+Attach the camera module and connect the Raspberry Pi to the internet.
+2. Install Dependencies:
+bash
+Copy code
 sudo apt update
 sudo apt upgrade
-```
+pip install -r requirements.txt
+3. Configuration for Email Notifications:
+Set up an SMTP server or use services like Pushbullet/Twilio.
+4. Clone Repository and Modify Paths:
+bash
+Copy code
+git clone https://github.com/irmuun8881/HomeSecurityWithRaspberry/.git
+cd [Repository Directory]
+Update file paths in the scripts to point to your local directories (e.g., for saved models, known faces data).
+5. Running the Application:
+bash
+Copy code
+python [Script Name]
+Usage
+Position the device strategically (e.g., near the front door).
+The system processes the video feed, recognizes faces, and categorizes them as known or unknown.
+Unrecognized faces trigger an email notification.
+Additional Notes
+Ensure your environment is correctly set up with all dependencies.
+Regularly update the system for security and functionality improvements.
+Project Results
+The system effectively recognizes faces, providing a secure environment. Detailed results and analytics can be found in the results folder.
