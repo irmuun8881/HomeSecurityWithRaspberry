@@ -26,7 +26,7 @@ facerec = dlib.face_recognition_model_v1('/Users/JessFort/Documents/My_Coding_fo
 video_capture = cv2.VideoCapture(0)
 video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
 video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
-video_capture.set(cv2.CAP_PROP_FPS, 10)  # Reduced frame rate
+
 
 # Email credentials
 sender_email = os.getenv('SENDER_EMAIL')
