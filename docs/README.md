@@ -6,6 +6,7 @@ Features
 Facial Recognition: Leverages dlib's model for accurate identification.
 Real-Time Notifications: Sends email alerts for unrecognized faces.
 Optimized for Raspberry Pi: Efficient for Raspberry Pi's limited processing capacity.
+
 Hardware Requirements
 Raspberry Pi (3b+ recommended)
 Camera Module
